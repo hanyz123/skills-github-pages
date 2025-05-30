@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安卓应用定时启动助手</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #6a11cb, #2575fc);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .timer-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .app-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(30, 30, 46, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #4facfe;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h2 i {
+            color: #00f2fe;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+            color: #ddd;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus {
+            border-color: #4facfe;
+            outline: none;
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+        
+        .timer-display {
+            text-align: center;
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 126, 95, 0.5);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .start-btn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+        }
+        
+        .reset-btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+        }
+        
+        .custom-btn {
+            background: linear-gradient(to right, #8e2de2, #4a00e0);
+            color: white;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .app-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-5px);
+            background: rgba(79, 172, 254, 0.2);
+            border-color: #4facfe;
+        }
+        
+        .app-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #4facfe;
+        }
+        
+        .app-name {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border-left: 5px solid #ff416c;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .notification.show {
+            display: block;
+        }
+        
+        .notification-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .notification i {
+            font-size: 2rem;
+            color: #ff416c;
+            align-self: center;
+        }
+        
+        .notification-text {
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .notification-text strong {
+            color: #00f2fe;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+        }
+        
+        .open-app-btn {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .open-app-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 176, 155, 0.5);
+        }
+        
+        .selected-app {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(79, 172, 254, 0.3);
+        }
+        
+        .selected-app h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #00f2fe;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .app-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .app-info p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .custom-app-form {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px dashed rgba(79, 172, 254, 0.5);
+        }
+        
+        .custom-app-form h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            color: #8e2de2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            flex: 1;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: rgba(30, 30, 46, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(50px);
+            transition: transform 0.4s ease;
+        }
+        
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.8rem;
+            color: #00f2fe;
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            color: #ff416c;
+        }
+        
+        .scheme-info {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .scheme-info h4 {
+            color: #4facfe;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .scheme-info p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #aaa;
+        }
+        
+        .scheme-example {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #ff7e5f;
+            word-break: break-all;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .app-icon-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .icon-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .icon-option:hover {
+            background: rgba(79, 172, 254, 0.5);
+            transform: scale(1.1);
+        }
+        
+        .icon-option.selected {
+            background: #4facfe;
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.8);
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .timer-display {
+                font-size: 3rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-mobile-alt"></i> 安卓应用定时启动助手</h1>
+            <p class="subtitle">设置倒计时，在指定时间提醒您打开安卓设备上的任意应用，支持自定义应用设置</p>
+        </header>
+        
+        <div class="main-content">
+            <section class="timer-section">
+                <h2><i class="fas fa-clock"></i> 设置倒计时</h2>
+                
+                <div class="input-group">
+                    <label for="hours">小时</label>
+                    <input type="number" id="hours" min="0" max="23" value="0" placeholder="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="minutes">分钟</label>
+                    <input type="number" id="minutes" min="0" max="59" value="10" placeholder="10">
+                </div>
+                
+                <div class="input-group">
+                    <label for="seconds">秒</label>
+                    <input type="number" id="seconds" min="0" max="59" value="0" placeholder="0">
+                </div>
+                
+                <div class="timer-display" id="timer">00:10:00</div>
+                
+                <div class="button-group">
+                    <button class="start-btn" id="startBtn">
+                        <i class="fas fa-play"></i> 开始倒计时
+                    </button>
+                    <button class="reset-btn" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
+            </section>
+            
+            <section class="app-section">
+                <h2><i class="fas fa-mobile"></i> 选择应用</h2>
+                <p>选择您手机上已安装的应用，设置定时启动</p>
+                
+                <div class="app-grid">
+                    <div class="app-card" data-app="whatsapp">
+                        <i class="fab fa-whatsapp"></i>
+                        <div class="app-name">WhatsApp</div>
+                    </div>
+                    <div class="app-card" data-app="facebook">
+                        <i class="fab fa-facebook"></i>
+                        <div class="app-name">Facebook</div>
+                    </div>
+                    <div class="app-card" data-app="instagram">
+                        <i class="fab fa-instagram"></i>
+                        <div class="app-name">Instagram</div>
+                    </div>
+                    <div class="app-card" data-app="twitter">
+                        <i class="fab fa-twitter"></i>
+                        <div class="app-name">Twitter</div>
+                    </div>
+                    <div class="app-card" data-app="youtube">
+                        <i class="fab fa-youtube"></i>
+                        <div class="app-name">YouTube</div>
+                    </div>
+                    <div class="app-card" data-app="spotify">
+                        <i class="fab fa-spotify"></i>
+                        <div class="app-name">Spotify</div>
+                    </div>
+                    <div class="app-card" data-app="other">
+                        <i class="fas fa-plus-circle"></i>
+                        <div class="app-name">其他应用</div>
+                    </div>
+                </div>
+                
+                <div class="custom-app-form">
+                    <h3><i class="fas fa-cog"></i> 自定义应用设置</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customAppName">应用名称</label>
+                            <input type="text" id="customAppName" placeholder="输入应用名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="customAppScheme">URL Scheme</label>
+                            <input type="text" id="customAppScheme" placeholder="例如：myapp://">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>选择应用图标</label>
+                        <div class="app-icon-selector">
+                            <div class="icon-option" data-icon="fas fa-camera">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-music">
+                                <i class="fas fa-music"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-video">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-gamepad">
+                                <i class="fas fa-gamepad"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-shopping-cart">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="icon-option" data-icon="fas fa-map-marker-alt">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="custom-btn" id="saveCustomApp">
+                        <i class="fas fa-save"></i> 保存自定义应用
+                    </button>
+                </div>
+                
+                <div class="selected-app" id="selectedApp">
+                    <h3><i class="fas fa-check-circle"></i> 已选应用</h3>
+                    <div class="app-info">
+                        <p>应用名称: <span id="appName">未选择</span></p>
+                        <p>URL Scheme: <code id="appScheme">未设置</code></p>
+                        <p>倒计时结束后将提示打开 <strong id="appDisplayName">所选应用</strong></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="notification" id="notification">
+            <button class="notification-close" id="closeNotification">&times;</button>
+            <div class="notification-content">
+                <i class="fas fa-bell"></i>
+                <div class="notification-text">
+                    <p>时间到！请打开 <strong id="notificationApp">应用</strong></p>
+                    <p>现在可以开始使用该应用了</p>
+                </div>
+                <button class="open-app-btn" id="openAppBtn">
+                    <i class="fas fa-external-link-alt"></i> 打开应用
+                </button>
+            </div>
+        </div>
+        
+        <div class="modal" id="schemeInfoModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fas fa-info-circle"></i> 关于URL Scheme</h2>
+                    <button class="close-modal" id="closeModal">&times;</button>
+                </div>
+                <div class="scheme-info">
+                    <h4>什么是URL Scheme？</h4>
+                    <p>URL Scheme是一种用于在移动设备上启动特定应用程序的协议。每个应用程序可以注册一个唯一的Scheme（如 myapp://），允许其他应用或网页通过该Scheme启动它。</p>
+                    
+                    <h4>如何获取URL Scheme？</h4>
+                    <p>1. 查看应用的官方网站或帮助文档</p>
+                    <p>2. 在搜索引擎中搜索"应用名称 + URL Scheme"</p>
+                    <p>3. 联系应用开发者获取</p>
+                    
+                    <div class="scheme-example">
+                        <p>常见应用Scheme示例：</p>
+                        <p>WhatsApp: whatsapp://</p>
+                        <p>Instagram: instagram://</p>
+                        <p>Spotify: spotify://</p>
+                        <p>YouTube: youtube://</p>
+                        <p>Twitter: twitter://</p>
+                    </div>
+                    
+                    <p style="margin-top: 15px;"><strong>注意：</strong> 部分应用可能没有公开的URL Scheme，您需要自行查找或使用本应用提供的默认应用。</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>安全提示：本工具不会自动启动任何应用，仅提供倒计时提醒功能</p>
+            <p>请确保目标应用已安装在您的安卓设备上 | 支持自定义应用设置</p>
+        </footer>
+    </div>
+
+    <script>
+        // 应用数据
+        const apps = {
+            whatsapp: { name: "WhatsApp", scheme: "whatsapp://", icon: "fab fa-whatsapp" },
+            facebook: { name: "Facebook", scheme: "fb://", icon: "fab fa-facebook" },
+            instagram: { name: "Instagram", scheme: "instagram://", icon: "fab fa-instagram" },
+            twitter: { name: "Twitter", scheme: "twitter://", icon: "fab fa-twitter" },
+            youtube: { name: "YouTube", scheme: "youtube://", icon: "fab fa-youtube" },
+            spotify: { name: "Spotify", scheme: "spotify://", icon: "fab fa-spotify" }
+        };
+        
+        // DOM元素
+        const hoursInput = document.getElementById('hours');
+        const minutesInput = document.getElementById('minutes');
+        const secondsInput = document.getElementById('seconds');
+        const timerDisplay = document.getElementById('timer');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const appCards = document.querySelectorAll('.app-card');
+        const selectedAppDiv = document.getElementById('selectedApp');
+        const appNameSpan = document.getElementById('appName');
+        const appSchemeSpan = document.getElementById('appScheme');
+        const appDisplayNameSpan = document.getElementById('appDisplayName');
+        const notification = document.getElementById('notification');
+        const notificationApp = document.getElementById('notificationApp');
+        const closeNotification = document.getElementById('closeNotification');
+        const openAppBtn = document.getElementById('openAppBtn');
+        const saveCustomAppBtn = document.getElementById('saveCustomApp');
+        const customAppNameInput = document.getElementById('customAppName');
+        const customAppSchemeInput = document.getElementById('customAppScheme');
+        const schemeInfoModal = document.getElementById('schemeInfoModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const iconOptions = document.querySelectorAll('.icon-option');
+        
+        // 变量
+        let countdown;
+        let totalSeconds = 0;
+        let selectedApp = null;
+        let isRunning = false;
+        let customApp = null;
+        let selectedIcon = "fas fa-camera";
+        
+        // 初始化
+        function init() {
+            updateTimerDisplay(600); // 初始10分钟
+            
+            // 设置应用选择事件
+            appCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const appId = this.dataset.app;
+                    if (appId === 'other') {
+                        // 显示URL Scheme信息
+                        schemeInfoModal.classList.add('show');
+                    } else {
+                        selectApp(appId);
+                    }
+                });
+            });
+            
+            // 设置按钮事件
+            startBtn.addEventListener('click', startCountdown);
+            resetBtn.addEventListener('click', resetCountdown);
+            closeNotification.addEventListener('click', () => {
+                notification.classList.remove('show');
+            });
+            
+            openAppBtn.addEventListener('click', openApp);
+            
+            // 保存自定义应用
+            saveCustomAppBtn.addEventListener('click', saveCustomApp);
+            
+            // 关闭模态框
+            closeModalBtn.addEventListener('click', () => {
+                schemeInfoModal.classList.remove('show');
+            });
+            
+            // 点击模态框外部关闭
+            schemeInfoModal.addEventListener('click', (e) => {
+                if (e.target === schemeInfoModal) {
+                    schemeInfoModal.classList.remove('show');
+                }
+            });
+            
+            // 图标选择事件
+            iconOptions.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    iconOptions.forEach(opt => opt.classList.remove('selected'));
+                    // 添加当前选中状态
+                    this.classList.add('selected');
+                    // 保存选中的图标
+                    selectedIcon = this.dataset.icon;
+                });
+            });
+            
+            // 默认选择第一个图标
+            if (iconOptions.length > 0) {
+                iconOptions[0].classList.add('selected');
+            }
+            
+            // 加载自定义应用
+            loadCustomApp();
+            
+            // 默认选择第一个应用
+            if (!selectedApp) {
+                selectApp('whatsapp');
+            }
+        }
+        
+        // 加载自定义应用
+        function loadCustomApp() {
+            const savedApp = localStorage.getItem('customApp');
+            if (savedApp) {
+                try {
+                    customApp = JSON.parse(savedApp);
+                    customAppNameInput.value = customApp.name;
+                    customAppSchemeInput.value = customApp.scheme;
+                    selectedIcon = customApp.icon;
+                    
+                    // 设置选中的图标
+                    iconOptions.forEach(icon => {
+                        if (icon.dataset.icon === selectedIcon) {
+                            icon.classList.add('selected');
+                        } else {
+                            icon.classList.remove('selected');
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error parsing custom app data', e);
+                }
+            }
+        }
+        
+        // 保存自定义应用
+        function saveCustomApp() {
+            const name = customAppNameInput.value.trim();
+            const scheme = customAppSchemeInput.value.trim();
+            
+            if (!name || !scheme) {
+                alert('请输入应用名称和URL Scheme');
+                return;
+            }
+            
+            // 创建自定义应用对象
+            customApp = {
+                name: name,
+                scheme: scheme,
+                icon: selectedIcon
+            };
+            
+            // 保存到localStorage
+            localStorage.setItem('customApp', JSON.stringify(customApp));
+            
+            // 选择这个自定义应用
+            selectCustomApp();
+            
+            alert('自定义应用设置已保存！');
+        }
+        
+        // 选择自定义应用
+        function selectCustomApp() {
+            if (!customApp) {
+                alert('请先设置自定义应用');
+                return;
+            }
+            
+            selectedApp = 'custom';
+            
+            // 更新UI
+            appNameSpan.textContent = customApp.name;
+            appSchemeSpan.textContent = customApp.scheme;
+            appDisplayNameSpan.textContent = customApp.name;
+            notificationApp.textContent = customApp.name;
+            
+            // 高亮显示选中的应用
+            highlightSelectedApp('custom');
+        }
+        
+        // 选择应用
+        function selectApp(appId) {
+            selectedApp = appId;
+            const app = apps[appId];
+            
+            // 更新UI
+            appNameSpan.textContent = app.name;
+            appSchemeSpan.textContent = app.scheme;
+            appDisplayNameSpan.textContent = app.name;
+            notificationApp.textContent = app.name;
+            
+            // 高亮显示选中的应用
+            highlightSelectedApp(appId);
+        }
+        
+        // 高亮选中的应用
+        function highlightSelectedApp(appId) {
+            appCards.forEach(card => {
+                if (card.dataset.app === appId) {
+                    card.style.borderColor = '#4facfe';
+                    card.style.background = 'rgba(79, 172, 254, 0.2)';
+                } else {
+                    card.style.borderColor = 'transparent';
+                    card.style.background = 'rgba(0, 0, 0, 0.3)';
+                }
+            });
+        }
+        
+        // 更新计时器显示
+        function updateTimerDisplay(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            timerDisplay.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // 开始倒计时
+        function startCountdown() {
+            if (isRunning) return;
+            
+            const hours = parseInt(hoursInput.value) || 0;
+            const minutes = parseInt(minutesInput.value) || 0;
+            const seconds = parseInt(secondsInput.value) || 0;
+            
+            totalSeconds = hours * 3600 + minutes * 60 + seconds;
+            
+            if (totalSeconds <= 0) {
+                alert('请设置有效的时间');
+                return;
+            }
+            
+            if (!selectedApp) {
+                alert('请选择应用');
+                return;
+            }
+            
+            isRunning = true;
+            startBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停';
+            startBtn.classList.add('reset-btn');
+            startBtn.classList.remove('start-btn');
+            
+            countdown = setInterval(() => {
+                totalSeconds--;
+                updateTimerDisplay(totalSeconds);
+                
+                if (totalSeconds <= 0) {
+                    clearInterval(countdown);
+                    isRunning = false;
+                    startBtn.innerHTML = '<i class="fas fa-play"></i> 开始倒计时';
+                    startBtn.classList.remove('reset-btn');
+                    startBtn.classList.add('start-btn');
+                    
+                    // 显示通知
+                    notification.classList.add('show');
+                }
+            }, 1000);
+        }
+        
+        // 重置倒计时
+        function resetCountdown() {
+            clearInterval(countdown);
+            isRunning = false;
+            startBtn.innerHTML = '<i class="fas fa-play"></i> 开始倒计时';
+            startBtn.classList.remove('reset-btn');
+            startBtn.classList.add('start-btn');
+            
+            hoursInput.value = '0';
+            minutesInput.value = '10';
+            secondsInput.value = '0';
+            
+            updateTimerDisplay(600); // 重置为10分钟
+        }
+        
+        // 尝试打开应用
+        function openApp() {
+            let appScheme;
+            
+            if (selectedApp === 'custom') {
+                if (!customApp) {
+                    alert('自定义应用未设置');
+                    return;
+                }
+                appScheme = customApp.scheme;
+            } else {
+                appScheme = apps[selectedApp].scheme;
+            }
+            
+            // 在真实环境中，我们会尝试打开应用
+            // 由于安全限制，这里只做演示
+            try {
+                window.location.href = appScheme;
+                console.log(`尝试打开应用: ${appScheme}`);
+            } catch (e) {
+                console.error('打开应用失败:', e);
+                alert(`无法打开应用，请确保已安装该应用\nScheme: ${appScheme}`);
+            }
+        }
+        
+        // 输入验证
+        [hoursInput, minutesInput, secondsInput].forEach(input => {
+            input.addEventListener('input', function() {
+                let value = parseInt(this.value) || 0;
+                
+                if (this === hoursInput) {
+                    if (value > 23) this.value = '23';
+                    if (value < 0) this.value = '0';
+                } else {
+                    if (value > 59) this.value = '59';
+                    if (value < 0) this.value = '0';
+                }
+                
+                const hours = parseInt(hoursInput.value) || 0;
+                const minutes = parseInt(minutesInput.value) || 0;
+                const seconds = parseInt(secondsInput.value) || 0;
+                
+                totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                updateTimerDisplay(totalSeconds);
+            });
+        });
+        
+        // 初始化应用
+        init();
+    </script>
+</body>
+</html>
